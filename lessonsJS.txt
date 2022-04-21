@@ -1,0 +1,81 @@
+import { compose, pipe } from "lodash/fp";
+import { Map } from "immutable";
+import { produce } from "immer";
+
+let input = "    javascript     ";
+
+const trim = (str) => str.trim();
+
+const impInDiv = (str) => `<div>${str}</div>`;
+
+const transform = compose(impInDiv, trim);
+const transform2 = pipe(trim, impInDiv);
+
+transform(input);
+
+let output = console.log(transform(input));
+let output2 = console.log(transform2(input));
+
+const person = {
+  name: "omid",
+  age: 23,
+  address: { country: "iran", city: "tehran" },
+};
+const newPerson = Object.assign({}, person, { name: "helen" });
+//! ES6
+const newPerson2 = {
+  ...person,
+  address: { ...person.address, city: "shiraz" },
+  name: "helen",
+};
+
+console.log(newPerson2);
+console.log(person);
+
+const numbers = [1, 2, 3];
+
+//add
+const added = [...numbers, 4]; //! [1,2,3,4]
+const added2 = [0, ...numbers]; //! [0,1,2,3]
+
+const index = numbers.indexOf(2);
+const added3 = [...numbers.slice(0, index), 4, ...numbers.slice(index)]; //! [1,4,2,3]
+// console.log(added3);
+
+//remove
+const remove = numbers.filter((n) => n !== 2); //! [1,3]
+
+//update
+
+const updated = numbers.map((n) => (n === 2 ? 13 : n)); //! [1,13,3]
+// console.log(updated);
+
+//! Immutable
+
+let book = Map({ title: "a brief history of time" });
+
+function publish(book) {
+  //   book.isPublished = true;
+  return book.set("isPublished", true);
+}
+
+// book = publish(book);
+const newBook = publish(book);
+console.log(book);
+console.log(book.toJS());
+console.log(newBook.toJS());
+
+//! immer
+
+let book2 = { title: "a brief history of time" };
+
+function publish2(book) {
+  return produce(book, (draftBook) => {
+    // name is not important
+    draftBook.isPublished = true;
+  });
+}
+
+const newBook2 = publish2(book2);
+console.log(book2);
+console.log(newBook2);
